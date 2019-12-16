@@ -1,0 +1,29 @@
+﻿GetPOSIT[imagePoints_,objectPoints_,objectMatrix_,focalLength_]:= Module[
+{objectVectors, imageVectors, IVect, JVect, ISquare, JSquare, IJ,
+imageDifference, row1, row2, row3, scale1, scale2, scale, oldSOPImagePoints,
+SOPImagePoints, translation, rotation, count = 0, converged = False},
+objectVectors = (#-objectPoints[[1]])& /@ objectPoints;
+oldSOPImagePoints = imagePoints;
+(* loop until difference between 2 SOP images is less than one pixel *)
+While[! converged,
+ If[count==0,
+  (* we get image vectors from image of reference point for POS: *)
+  imageVectors = Map[(# - imagePoints[[1]])&, imagePoints],
+  (* else count>0, we compute a SOP image first for POSIT: *)
+  SOPImagePoints = imagePoints(1+(objectVectors.row3)/translation[[3]]);
+  imageDifference = Apply[Plus, Abs[Round[Flatten[SOPImagePoints]]-Round[Flatten[oldSOPImagePoints]]]];
+  oldSOPImagePoints = SOPImagePoints;
+  imageVectors = Map[(# - SOPImagePoints[[1]])&, SOPImagePoints]
+ ]; (* End If*)
+ {IVect, JVect} = Transpose[objectMatrix.imageVectors];
+ ISquare = IVect.IVect; JSquare = JVect.JVect; IJ = IVect.JVect;
+ {scale1, scale2} = Sqrt[{ISquare, JSquare}];
+ {row1, row2} = {IVect/scale1, JVect/scale2};
+ row3 = RotateLeft[row1] RotateRight[row2] - RotateLeft[row2] RotateRight[row1];(* cross-product *)
+ rotation={row1, row2, row3};
+ scale = (scale1 + scale2)/2.0; (* scaling factor in SOP *)
+ translation = Append[imagePoints[[1]], focalLength]/scale;
+ converged = (count>0) && (imageDifference<1);
+ count++
+]; (* End While *)
+Return[{rotation, translation}]] (* End Module *)

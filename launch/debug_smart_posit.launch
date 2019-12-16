@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="spacecam_bridge" type="cpp_smart_posit" name="smart_posit" launch-prefix="xterm -e gdb --args" output="screen"/>
+</launch>

@@ -1,0 +1,30 @@
+<!--
+
+uncomment these two lines in CMakeList.txt and recompile package:
+
+#add_compile_options(-pg)
+#set(catkin_LIBRARIES ${catkin_LIBRARIES} -pg)
+
+-->
+
+<launch>
+  <env name="GMON_OUT_PREFIX" value="cpp_smart_posit" />
+  <node pkg="spacecam_bridge" type ="cpp_smart_posit" name="smart_posit"/>
+</launch>
+
+<!--
+
+on exit analyze with: gprof devel/lib/spacecam_bridge/cpp_smart_posit ~/.ros/cpp_smart_posit.21300
+
+example output:
+
+%   cumulative   self              self     total
+time   seconds   seconds    calls  Ts/call  Ts/call  name
+ 0.00      0.00     0.00      423     0.00     0.00  boost::detail::shared_count::~shared_count()
+ 0.00      0.00     0.00      222     0.00     0.00  boost::detail::sp_counted_base::release()
+ 0.00      0.00     0.00      222     0.00     0.00  boost::detail::atomic_exchange_and_add(int*, int)
+ 0.00      0.00     0.00      221     0.00     0.00  boost::detail::shared_count::shared_count(boost::detail::shared_count const&)
+ 0.00      0.00     0.00      221     0.00     0.00  boost::detail::sp_counted_base::add_ref_copy()
+ 0.00      0.00     0.00      221     0.00     0.00  boost::detail::atomic_increment(int*)
+
+-->

@@ -1,0 +1,5 @@
+<launch>
+  <node name="wifi" pkg="rosserial_python" type="serial_node.py" output="screen">
+    <param name="port" value="tcp"/>
+  </node>
+</launch>
